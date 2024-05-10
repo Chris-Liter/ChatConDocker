@@ -6,10 +6,10 @@ const io = require('socket.io')(http, {
     }
   });
 
-let mensajes = []
+const mensajes = []; // Declaración de la variable mensajes fuera de la función de callback
+
 app.get('/', (req, res) => {
-  res.send('<h1>Hola bro{}</h1>');
-  res.send(mensajes)
+  res.send('<h1>Hola bro</h1>');
 });
 
 io.on('connection', (socket) => {
@@ -17,9 +17,12 @@ io.on('connection', (socket) => {
 
     socket.on('message', (data) => {
         console.log('Mensaje recibido:', data);
-        mensajes.push(data); // Agregar el mensaje al array
-        io.emit('messages', mensajes); // Enviar el array actualizado a todos los clientes conectados
+        if (!mensajes.includes(data)) { // Verifica si el mensaje ya existe en el arreglo
+            mensajes.push(data); // Agregar el mensaje al array solo si no existe
+        }
+        io.emit('message', mensajes); // Enviar el array actualizado a todos los clientes conectados
     });
+    
 
     socket.on('disconnect', () => {
         console.log('user disconnected');

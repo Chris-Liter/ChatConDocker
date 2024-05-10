@@ -19,10 +19,11 @@ export class SocketsService {
     // No suscribas aquí, maneja la respuesta en el servidor dentro de la función on
   }
 
-  getMensajes(): Observable<string> {
+  getMensajes(): any {
     return new Observable((observer) => {
       this.socket.on('message', (message: string) => {
         observer.next(message);
+        console.log("Mensajes:", message)
       });
     });
   }

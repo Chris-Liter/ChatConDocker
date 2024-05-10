@@ -16,21 +16,29 @@ export class ChatComponent implements OnInit{
     
   }
   ngOnInit(): void {
-    this.servicio.getMensajes().subscribe((loop) =>{
-      this.messages.push(loop)
-      
-    })
+    this.servicio.getMensajes().subscribe((loop: any) => {
+      this.messages.push(loop);
+      console.log('Mensajes actualizados:', this.messages);
+    });
   }
 
   mensajes: Mensajes = new Mensajes()
-  messages: any
+  messages: any 
 
   newMessage: any
 
 
-  sendMessage(){
+  lisstar(){
+    this.servicio.getMensajes().subscribe((loop: any) => {
+      this.messages = loop
+      console.log('Mensajes actualizados:', this.messages);
+    });
+  }
+
+  sendMessage(): void{
     console.log(this.newMessage)
     this.servicio.sendMensajes(this.newMessage)
     this.newMessage = ""
+    this.lisstar()
   }
 }
