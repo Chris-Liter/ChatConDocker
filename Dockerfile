@@ -1,39 +1,27 @@
-FROM node:16-alpine AS build
-
-RUN mkdir -p /app
-
+# Etapa de construcción para la aplicación Angular
+FROM node:16-alpine AS build-angular
 WORKDIR /app
-
 COPY ./Chat/package.json /app
-
 RUN npm install
-
 COPY ./Chat/ /app
-
-RUN npm install
-
-COPY . /app
-
 RUN npm run build --prod
 
-
-FROM nginx:1.17.1-alpine
-
-COPY --from=build /app/dist/Chat /usr/share/nginx/html
-
-FROM node:latest
-
+# Etapa de construcción para el servidor Node.js
+FROM node:latest AS build-node
 WORKDIR /application
+COPY ./ServidorNode /application/ServidorNode
+RUN npm install --prefix /application/ServidorNode
 
-# Copia el código fuente del servidor Node.js
-COPY ./ServidorNode /app/ServidorNode
+# Etapa final para crear la imagen final
+FROM nginx:1.17.1-alpine
+WORKDIR /usr/share/nginx/html
+COPY --from=build-angular /app/dist/Chat .
+COPY --from=build-node /application/ServidorNode /application/ServidorNode
 
-# Instala las dependencias necesarias para el servidor Node.js
-RUN npm install --prefix /app/ServidorNode
-
-# Expone los puertos necesarios para el acceso web y las conexiones de WebSocket
+# Exponer los puertos necesarios
 EXPOSE 80
 EXPOSE 3000
 
-# Comandos para iniciar el servidor Node.js y el servidor web para servir la aplicación Angular
-ENTRYPOINT ["node", "/app/ServidorNode/server.js"]
+RUN apk add --no-cache nodejs npm
+# Comando para iniciar ambos servidores
+CMD ["sh", "-c", "npm start --prefix /application/ServidorNode & nginx -g 'daemon off;'"]

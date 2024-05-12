@@ -8,6 +8,8 @@ const io = require('socket.io')(http, {
 
 const mensajes = []; // Declaración de la variable mensajes fuera de la función de callback
 
+//
+
 app.get('/', (req, res) => {
   res.send('<h1>Hola bro</h1>');
 });
