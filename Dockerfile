@@ -19,6 +19,7 @@ COPY --from=build /app/dist/Chat /usr/share/nginx/html
 FROM node:latest
 
 WORKDIR /application
+#oghyufifoeeoseghesripughnersuorprghespurgdfvn
 
 # Copia el código fuente del servidor Node.js
 COPY ./ServidorNode /application/ServidorNode
@@ -31,3 +32,4 @@ EXPOSE 3000
 
 # Comando para iniciar el servidor Node.js
 CMD ["node", "/application/ServidorNode/server.js"]
+ 
